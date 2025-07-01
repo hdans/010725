@@ -1,0 +1,109 @@
+/* --- General Setup & Resets --- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Poppins', sans-serif; background-color: #121212; color: #f0f0f0; line-height: 1.8; overflow: hidden; }
+
+/* --- Font Helpers --- */
+.font-playfair { font-family: 'Playfair Display', serif; }
+.font-dancing { font-family: 'Dancing Script', cursive; }
+
+/* --- Main Structure --- */
+.page { position: relative; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 40px; overflow: hidden; }
+.content-wrapper { position: relative; z-index: 3; text-align: center; max-width: 900px; padding: 30px; }
+.content-wrapper.full-width { max-width: 1200px; }
+
+h1, h2 { font-weight: 700; font-size: 3.2rem; margin-bottom: 1rem; line-height: 1.2; }
+p { font-size: 1.1rem; font-weight: 300; }
+#main-content { display: none; }
+
+/* --- REVISI: Background & Particle Layering --- */
+/* Layer 1: Background Image (di belakang) */
+.page::before {
+    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background-size: cover; background-position: center;
+    background-blend-mode: multiply; background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1; /* Layer paling bawah */
+}
+/* Layer 2: Particles Canvas (di tengah) */
+.particle-canvas {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 2; /* Di atas background, di bawah konten */
+}
+/* Layer 3: Konten (teks & gambar, di depan) */
+.content-wrapper, .text-content, .image-content {
+    position: relative; /* Membuat stacking context */
+    z-index: 3; /* Di atas partikel dan background */
+}
+
+/* --- Definisi Background per Halaman --- */
+#page-1::before { background-image: url('../im'); background-color: rgba(0,0,0,0.5); }
+#page-2::before { background-image: url('../images/visi\ first\ date.webp'); filter: grayscale(50%); }
+#page-3::before { background-image: url('../images/visi\ lab.jpg'); filter: sepia(30%); }
+#page-4::before { background-image: url('../images/visi\ porsen.webp'); filter: blur(2px); }
+#page-7::before { background-image: url('../images/visi\ keren.webp'); filter: grayscale(50%); }
+#page-5::before { background-image: url('../images/visi\ photobooth.webp'); }
+#page-6::before { background-color: #1a1a1a; }
+
+/* --- Page 1: Splash Screen --- */
+#page-1 h1 { font-size: 4.5rem; }
+#enter-button { background-color: #fff; color: #121212; border: none; padding: 12px 25px; font-family: 'Poppins', sans-serif; font-weight: bold; font-size: 1rem; border-radius: 50px; margin-top: 2rem; cursor: pointer; transition: transform 0.3s ease, background-color 0.3s ease; }
+#enter-button:hover { transform: scale(1.1); background-color: #f1c40f; }
+
+/* --- Layout Split (Teks + Highlight Image) --- */
+/* .layout-split { display: flex; align-items: center; justify-content: space-between; gap: 3rem; width: 100%; max-width: 1200px; } */
+.layout-split .text-content { flex-basis: 50%; text-align: left; }
+.layout-split .image-content { flex-basis: 40%; }
+.highlight-img { width: 100%; height: auto; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+.layout-split.reverse { flex-direction: row-reverse; }
+.layout-split.reverse .text-content { text-align: right; }
+
+/* --- Page 5 Photo Grid --- */
+#page-5 .photo-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-top: 2rem; }
+#page-5 .photo-grid img { width: 100%; height: 500px; object-fit: cover; border-radius: 8px; border: 3px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: transform 0.3s ease; }
+#page-5 .photo-grid img:hover { transform: scale(1.03); }
+
+/* --- REVISI: Page 6 Bunga Mekar Animasi --- */
+.flower-container { width: 250px; height: 250px; margin: 2rem auto 0; }
+.flower-svg { width: 100%; height: 100%; opacity: 10; /* Mulai dari tak terlihat */ transform: scale(0.2); }
+
+/* Animasi #1: Mekar saat masuk */
+@keyframes bloom {
+  0% { transform: scale(0.2) rotate(0deg); opacity: 0; }
+  100% { transform: scale(1) rotate(20deg); opacity: 1; }
+}
+.flower-svg.blooming {
+    /* Panggil animasi mekar */
+    animation: bloom 4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Animasi #2: Idle (bernapas) setelah mekar */
+@keyframes idle {
+  0%, 100% { transform: scale(1) rotate(20deg); }
+  50% { transform: scale(1.05) rotate(15deg); }
+}
+.flower-svg.idle {
+    /* Panggil animasi idle, akan ditambahkan via JS */
+    animation: idle 6s ease-in-out infinite;
+}
+
+/* --- Audio & Scroll --- */
+#audio-control-button { position: fixed; bottom: 20px; right: 20px; z-index: 1000; background-color: #f1c40f; color: #121212; border: none; padding: 10px 15px; font-family: 'Poppins', sans-serif; font-weight: bold; border-radius: 50px; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+.hidden { display: none !important; }
+.scroll-indicator { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 3; }
+.arrow { width: 20px; height: 20px; border: 2px solid white; border-top: none; border-left: none; transform: rotate(45deg); animation: bounce 2s infinite; }
+@keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0) rotate(45deg); } 40% { transform: translateY(-15px) rotate(45deg); } 60% { transform: translateY(-7px) rotate(45deg); } }
+
+/* --- Footer --- */
+footer { text-align: center; padding: 50px 20px; background-color: #0a0a0a; z-index: 3; position: relative; }
+
+/* --- Responsive Design --- */
+@media (max-width: 768px) {
+    h1, h2 { font-size: 2.2rem; }
+    #page-1 h1 { font-size: 2.8rem; }
+    p { font-size: 1rem; }
+    .page { padding: 40px 20px; }
+    .layout-split, .layout-split.reverse { flex-direction: column; gap: 2rem; }
+    .layout-split .text-content, .layout-split.reverse .text-content { text-align: center; }
+    #page-5 .photo-grid { grid-template-columns: 1fr; }
+    #page-5 .photo-grid img { height: 350px; }
+}
